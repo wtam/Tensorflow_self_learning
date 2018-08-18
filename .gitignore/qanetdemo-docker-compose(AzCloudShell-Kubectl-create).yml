@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qanetdemo-web
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+    	app: qanetdemo-web
+  template:
+    metadata:
+      labels:
+        app: qanetdemo-web
+    spec:
+      selector:
+    	app: qanetdemo-web
+      containers:
+      - name: qanetdemo-container
+        image: azcontainerregistrydemo.azurecr.io/qanetdemo-container
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+        env:
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qanetdemo-web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+  selector:
+    app: qanetdemo-web
+
+ 
